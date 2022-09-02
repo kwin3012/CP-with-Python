@@ -1,0 +1,86 @@
+from sys import stdin
+input = stdin.readline
+
+def binary_search(a,tar):
+    l = 0
+    r = len(a)-1
+    while(l<=r):
+        m = (l+r)//2
+        if a[m]==tar:
+            return m+1
+        elif a[m]<tar:
+            if m+1<len(a):
+                if tar<a[m+1]:
+                    return m+1
+                elif tar == a[m+1]:
+                    return m+2
+                else:
+                    l = m+1
+            else:
+                return m+1
+        else:
+            r = m-1
+            
+    return 0
+            
+
+t = int(input())
+for _ in range(t):
+    n = int(input())
+    edges = [ [] for i in range(n+1)]
+    for i in range(n-1):
+        p,b,r = map(int,input().split())
+        edges[p].append([i+2,b,r])
+        
+        
+    ans = [0]*(n+1)
+    root = 1
+    stack = [[root,-1,-1,0]]
+    helper = []
+    curr_level = 0
+    while(len(stack)!=0):
+        a = stack.pop()
+        node = a[0]
+        bi = a[1]
+        ri = a[2]
+        level = a[3]
+        if bi == -1 and ri == -1:
+            r = []
+            curr = 0
+        else:
+            if len(r) == 0:
+                r.append(ri)
+            else:
+                r.append(r[-1]+ri)
+            curr += bi
+            helper.append(bi)
+            
+            ai = binary_search(r,curr)
+            ans[node] = ai
+            
+            # print(node)
+            # print(r)
+            # print(curr)
+            # print(ai,"aa")
+            # print("------")
+            
+            
+        if len(edges[node]) == 0:
+            if len(stack)>0:
+                level_req = stack[-1][3]
+                x = level - level_req + 1
+                while(x):
+                    r.pop()
+                    curr-=helper.pop()
+                    x-=1
+        else:
+            for i in range(len(edges[node])):
+                stack.append(edges[node][i] + [level+1])
+                
+    print(*ans[2:])
+            
+    
+        
+        
+        
+        
